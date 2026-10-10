@@ -1,11 +1,7 @@
-import "server-only";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
 import sharp, { type Metadata } from "sharp";
-import { resolveInside } from "@/lib/files/paths";
 
-export const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
+const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
 const ALLOWED_FORMATS = new Set(["jpeg", "png", "webp"]);
-const FILENAME_PATTERN = /^photo-\d{13}\.(jpeg|png|webp)$/;
 
 export class PhotoError extends Error {}
 
@@ -28,26 +24,7 @@ export async function validatePhoto(buffer: Buffer): Promise<"jpeg" | "png" | "w
   return meta.format as "jpeg" | "png" | "webp";
 }
 
-/** Store an uploaded photo as a new file. Earlier uploads are kept, never overwritten. */
-export async function savePhoto(dataDir: string, buffer: Buffer): Promise<string> {
-  const format = await validatePhoto(buffer);
-  const dir = resolveInside(dataDir, "creator");
-  await mkdir(dir, { recursive: true });
-  const filename = `photo-${Date.now()}.${format}`;
-  await writeFile(resolveInside(dir, filename), buffer, { flag: "wx" });
-  return filename;
-}
-
-export async function readPhoto(dataDir: string, filename: string): Promise<Buffer | null> {
-  if (!FILENAME_PATTERN.test(filename)) return null;
-  try {
-    return await readFile(resolveInside(dataDir, "creator", filename));
-  } catch {
-    return null;
-  }
-}
-
-/** Downscaled, lightly enhanced copy as a data URI for the renderer. The stored original is untouched. */
+/** Downscaled, lightly enhanced copy as a data URI for the renderer. The original file is untouched. */
 export async function photoDataUri(buffer: Buffer): Promise<string> {
   const jpeg = await sharp(buffer)
     .rotate() // respect phone EXIF orientation

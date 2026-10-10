@@ -1,8 +1,6 @@
-import { mkdtemp, readdir, readFile, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { listDrafts, readDraft } from "@/lib/drafts/drafts";
 import { sampleCarousel } from "@/lib/fixtures/sample-carousel";
 import { parseCarouselFile } from "@/lib/schemas/carousel.schema";
 
@@ -31,34 +29,5 @@ describe("carousel files", () => {
       const result = parseCarouselFile(JSON.parse(await readFile(path.join(dir, f), "utf8")));
       expect(result.success ? "valid" : `${f}: ${result.error.issues[0].message}`).toBe("valid");
     }
-  });
-});
-
-describe("drafts", () => {
-  it("lists valid and invalid drafts and only reads safe names", async () => {
-    const dir = await mkdtemp(path.join(tmpdir(), "drafts-"));
-    await writeFile(path.join(dir, "good.json"), JSON.stringify(sampleCarousel));
-    await writeFile(path.join(dir, "broken.json"), "{ nope");
-    await writeFile(path.join(dir, "brand.json"), "{}");
-    await writeFile(path.join(dir, "notes.txt"), "ignored");
-    const drafts = await listDrafts(dir);
-    expect(drafts).toEqual([
-      { name: "broken.json", topic: null, error: "Not valid JSON" },
-      { name: "good.json", topic: sampleCarousel.cover.headline, error: null },
-    ]);
-    expect(await readDraft(dir, "../package.json")).toBeNull();
-    expect(await readDraft(dir, "missing.json")).toBeNull();
-  });
-});
-
-describe("Claude prompt", () => {
-  it("embeds a valid example and the topic", async () => {
-    const { PROMPT_EXAMPLE, buildCarouselPrompt, extractJson } =
-      await import("@/lib/prompt/carousel-prompt");
-    expect(parseCarouselFile(PROMPT_EXAMPLE).success).toBe(true);
-    const prompt = buildCarouselPrompt("Git habits", 7);
-    expect(prompt).toContain('"Git habits"');
-    expect(prompt).toContain("7 slides total");
-    expect(JSON.parse(extractJson('Sure!\n```json\n{"a":1}\n```\nEnjoy'))).toEqual({ a: 1 });
   });
 });

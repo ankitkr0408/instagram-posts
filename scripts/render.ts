@@ -18,6 +18,7 @@ import { sanitizeFilename } from "@/lib/files/paths";
 import { photoDataUri, validatePhoto } from "@/lib/photo/photo";
 import { closeBrowser, renderCarousel } from "@/lib/render/render-carousel";
 import { parseCarouselFile } from "@/lib/schemas/carousel.schema";
+import { findDuplicateTopics } from "@/lib/topics/duplicate-topic";
 import type { Branding } from "@/templates/layout";
 import { TEMPLATE_NAMES, type TemplateName } from "@/templates/themes";
 
@@ -46,6 +47,21 @@ async function loadBranding(file: string): Promise<Branding> {
     handle: brand.handle,
     photo: { src: await photoDataUri(buffer), focalX, focalY, zoom },
   };
+}
+
+/** Topics of the other carousel files next to `input`, for the duplicate warning. */
+async function otherTopics(input: string): Promise<string[]> {
+  const dir = path.dirname(path.resolve(input));
+  const names = (await readdir(dir)).filter(
+    (f) => f.endsWith(".json") && f !== "brand.json" && f !== path.basename(input),
+  );
+  const topics = await Promise.all(
+    names.map(async (f) => {
+      const parsed = parseCarouselFile(JSON.parse(await readFile(path.join(dir, f), "utf8")));
+      return parsed.success ? (parsed.data.topic ?? parsed.data.content.cover.headline) : null;
+    }),
+  );
+  return topics.filter((t): t is string => t !== null);
 }
 
 /** Pull `--name value` out of args. */
@@ -80,6 +96,9 @@ async function main() {
       continue;
     }
     const file = result.data;
+    const topic = file.topic ?? file.content.cover.headline;
+    const [dupe] = findDuplicateTopics(topic, await otherTopics(input));
+    if (dupe) console.warn(`! Similar to an earlier carousel: "${dupe.topic}"`);
     const outDir = path.resolve("output", sanitizeFilename(path.basename(input, ".json")));
     await mkdir(outDir, { recursive: true });
     if (!only) {

@@ -1,4 +1,3 @@
-import "server-only";
 import { mkdir, writeFile } from "node:fs/promises";
 import { chromium, type Browser } from "playwright";
 import sharp from "sharp";
@@ -11,7 +10,7 @@ import { TEMPLATES, type TemplateName } from "@/templates/themes";
 
 export type SlideIssue = { slide: number; message: string };
 
-export type RenderResult = {
+type RenderResult = {
   files: string[]; // slide filenames, in order
   issues: SlideIssue[];
 };

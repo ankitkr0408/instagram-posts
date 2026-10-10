@@ -29,7 +29,7 @@ export const LIMITS = {
 
 const text = (max: number) => z.string().trim().min(1).max(max);
 
-export const CATEGORIES = [
+const CATEGORIES = [
   "ai-for-developers",
   "software-engineering",
   "product-building",
@@ -38,7 +38,7 @@ export const CATEGORIES = [
   "developer-workflows",
   "launch-checklists",
 ] as const;
-export const categorySchema = z.enum(CATEGORIES);
+const categorySchema = z.enum(CATEGORIES);
 
 export const SLIDE_TYPES = [
   "content",
@@ -250,7 +250,6 @@ export const carouselContentSchema = z
     });
   });
 
-export type Category = z.infer<typeof categorySchema>;
 export type Slide = z.infer<typeof slideSchema>;
 export type CaptionContent = z.infer<typeof captionSchema>;
 export type CarouselContent = z.infer<typeof carouselContentSchema>;
@@ -280,14 +279,13 @@ export function validateCarousel(input: unknown): ValidationResult {
  * A carousel file: what Claude Code writes into content/*.json and what the app imports.
  * Only `content` is required.
  */
-export const carouselFileSchema = z.strictObject({
+const carouselFileSchema = z.strictObject({
   topic: z.string().trim().min(3).max(160).optional(),
   category: categorySchema.default("product-building"),
   template: z.enum(TEMPLATE_NAMES).default("ship-it-right"),
   includePhoto: z.boolean().default(true),
   content: carouselContentSchema,
 });
-export type CarouselFile = z.infer<typeof carouselFileSchema>;
 
 /** Accept a full carousel file or bare content (an object with `cover` at the root). */
 export function parseCarouselFile(input: unknown) {
@@ -295,13 +293,3 @@ export function parseCarouselFile(input: unknown) {
     input && typeof input === "object" && "cover" in input ? { content: input } : input;
   return carouselFileSchema.safeParse(wrapped);
 }
-
-export const CATEGORY_LABELS: Record<Category, string> = {
-  "ai-for-developers": "AI for developers",
-  "software-engineering": "Software engineering",
-  "product-building": "Product building & shipping",
-  "app-ideas": "App ideas & MVPs",
-  "startup-breakdowns": "Startup/product breakdowns",
-  "developer-workflows": "Developer workflows & tools",
-  "launch-checklists": "Security, a11y, performance & launch",
-};

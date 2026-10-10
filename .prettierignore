@@ -1,7 +1,5 @@
-.next
 node_modules
 output
 data
 package-lock.json
-next-env.d.ts
 project.md

@@ -1,4 +1,3 @@
-import "server-only";
 import { readFile, writeFile } from "node:fs/promises";
 import JSZip from "jszip";
 import { formatCaption } from "@/lib/caption/format-caption";

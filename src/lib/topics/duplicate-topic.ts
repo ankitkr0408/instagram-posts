@@ -58,7 +58,7 @@ export function topicSimilarity(a: string, b: string): number {
   return shared / (ta.size + tb.size - shared);
 }
 
-export type DuplicateMatch = { topic: string; kind: "exact" | "near"; similarity: number };
+type DuplicateMatch = { topic: string; kind: "exact" | "near"; similarity: number };
 
 /**
  * Find prior topics that match exactly or closely. This only warns: the user
