@@ -1,0 +1,99 @@
+{
+  "topic": "Play Store launch: 5 things people forget",
+  "category": "launch-checklists",
+  "template": "night-shift",
+  "includePhoto": true,
+  "content": {
+    "seriesName": "Ship It Right",
+    "seriesPart": "Android",
+    "cover": {
+      "headline": "Before you hit Publish on Google Play, remember these 5 things",
+      "subtitle": "The small details that turn launch day into a week of waiting"
+    },
+    "slides": [
+      {
+        "id": "listing",
+        "type": "content",
+        "title": "Your listing is your landing page",
+        "description": "Most people decide from the icon, the first screenshots and the short description.",
+        "bullets": [
+          "App icon: 512 × 512 PNG",
+          "Feature graphic: 1024 × 500",
+          "Screenshots of real screens, not just slogans",
+          "Short description: 80 characters, make them count"
+        ],
+        "tip": "Answer \"what does it do?\" in the first line of the full description."
+      },
+      {
+        "id": "rushed-vs-ready",
+        "type": "comparison",
+        "title": "Rushed vs ready",
+        "comparison": {
+          "leftTitle": "Rushed",
+          "rightTitle": "Ready",
+          "rows": [
+            { "left": "Debug build uploaded", "right": "Signed release .aab" },
+            { "left": "Old targetSdk", "right": "Targets the current required API level" },
+            { "left": "Data safety guessed", "right": "Data safety matches every SDK" },
+            { "left": "Tested on one phone", "right": "Closed test + pre-launch report" },
+            { "left": "No privacy policy", "right": "Public, accurate privacy policy" }
+          ]
+        }
+      },
+      {
+        "id": "version-code",
+        "type": "content",
+        "title": "Version codes only go up",
+        "description": "Every upload needs a higher versionCode than the last one. Users see versionName; Play compares versionCode.",
+        "bullets": [
+          "Bump versionCode for every build you upload",
+          "Pick a scheme you can keep, e.g. 10203 for 1.2.3",
+          "Automate the bump in CI so it never collides"
+        ],
+        "tip": "Play rejects an upload that reuses a version code, so automate it before launch day."
+      },
+      {
+        "id": "rollout",
+        "type": "content",
+        "title": "Roll out in stages",
+        "description": "You don't have to ship to everyone at once.",
+        "bullets": [
+          "Start with a staged rollout to a small percentage",
+          "Watch crashes and ANRs in Android vitals",
+          "Halt the rollout if something breaks, then fix forward"
+        ],
+        "tip": "Review times vary. Don't announce a launch date until the release is approved."
+      },
+      {
+        "id": "secrets",
+        "type": "content",
+        "title": "Keep your keys safe",
+        "description": "Anything inside your app bundle can be extracted. Keep real secrets on your server, not in the APK.",
+        "bullets": [
+          "Back up the upload keystore and its passwords",
+          "Never commit keystores or API keys to Git",
+          "Restrict API keys in each provider's console"
+        ]
+      },
+      {
+        "id": "closing",
+        "type": "closing",
+        "title": "Launch day should be boring",
+        "description": "Do the checks before you upload, and launch day becomes the easy part."
+      }
+    ],
+    "caption": {
+      "caption": "Most Play Store launch delays come down to small things that were easy to fix earlier.\n\nThis one covers your store listing, what a ready release looks like, version codes, staged rollouts and keeping your keys safe.\n\nPlay policies change often, so double-check the current requirements in Play Console.",
+      "cta": "Follow for more launch checklists, and save this one for your next release.",
+      "hashtags": [
+        "androiddev",
+        "playstore",
+        "googleplay",
+        "appdev",
+        "mobiledev",
+        "indiehacker",
+        "startup"
+      ]
+    }
+  }
+}

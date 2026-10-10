@@ -1,0 +1,107 @@
+{
+  "topic": "Before publishing on the Play Store: 5 things to remember",
+  "category": "launch-checklists",
+  "template": "ship-it-right",
+  "includePhoto": true,
+  "content": {
+    "seriesName": "Ship It Right",
+    "seriesPart": "Android",
+    "cover": {
+      "headline": "5 things to check before you publish on the Play Store",
+      "subtitle": "A pre-launch checklist so your first release doesn't get stuck in review"
+    },
+    "slides": [
+      {
+        "id": "app-bundle",
+        "type": "content",
+        "title": "Upload a signed App Bundle",
+        "description": "New apps on Google Play are published as an Android App Bundle (.aab), signed with your upload key. Play App Signing then signs what users download.",
+        "bullets": [
+          "Build it with ./gradlew bundleRelease",
+          "Back up the upload keystore and its passwords",
+          "Never commit the keystore or passwords to Git"
+        ],
+        "tip": "Lost your upload key? With Play App Signing you can request a reset, but it takes time. Back it up today."
+      },
+      {
+        "id": "target-api",
+        "type": "content",
+        "title": "Target the required API level",
+        "description": "Since Aug 31, 2026, new apps and updates must target Android 16 (API 36). The bar rises every year, so check the current rule before each release.",
+        "bullets": [
+          "Set targetSdk = 36 in your app module",
+          "Test on a device or emulator running Android 16",
+          "Read that version's behavior changes"
+        ],
+        "tip": "Wear OS, Automotive and TV apps have different targets. Check Play's target API page for yours."
+      },
+      {
+        "id": "release-build",
+        "type": "code",
+        "title": "Shrink and test the release build",
+        "code": {
+          "language": "kotlin",
+          "after": "android {\n  buildTypes {\n    release {\n      isMinifyEnabled = true\n      isShrinkResources = true\n      proguardFiles(\n        getDefaultProguardFile(\n          \"proguard-android-optimize.txt\"),\n        \"proguard-rules.pro\")\n    }\n  }\n}",
+          "explanation": "R8 removes unused code and resources. Test the release build itself: shrinking can break libraries that rely on reflection."
+        }
+      },
+      {
+        "id": "app-content",
+        "type": "content",
+        "title": "Complete App content honestly",
+        "description": "Play Console won't let you publish until the App content section is done, and it must match what your app really does.",
+        "bullets": [
+          "A public, accurate privacy policy URL",
+          "Data safety form, including analytics and crash SDKs",
+          "Content rating questionnaire",
+          "Ads declaration and target audience"
+        ]
+      },
+      {
+        "id": "testing",
+        "type": "content",
+        "title": "Test with real users first",
+        "description": "Personal developer accounts created after Nov 2023 must run a closed test (currently 12 testers for 14 days) before production access.",
+        "bullets": [
+          "Read the pre-launch report for crashes",
+          "Fix crashes and ANRs flagged in Android vitals",
+          "Check sign-in, payments and deep links on real devices"
+        ],
+        "tip": "Requirements change. Confirm yours in Play Console before you plan a launch date."
+      },
+      {
+        "id": "checklist",
+        "type": "checklist",
+        "title": "Before you hit Publish",
+        "bullets": [
+          "Signed .aab from the release variant",
+          "targetSdk meets the current requirement",
+          "Release build shrunk and tested",
+          "App content and Data safety complete",
+          "Closed test done, vitals clean",
+          "Listing: icon, screenshots, description"
+        ]
+      },
+      {
+        "id": "closing",
+        "type": "closing",
+        "title": "Ship once, ship clean",
+        "description": "A calm launch is mostly preparation. Run this checklist on every release, not just the first one."
+      }
+    ],
+    "caption": {
+      "caption": "Your first Play Store release shouldn't get stuck in review because of something on a checklist.\n\nHere are 5 things to check before you hit Publish: a signed App Bundle, the required target API level, a tested release build, an honest App content section, and a real closed test.\n\nPolicies change every year, so confirm the current rules in Play Console before you launch.",
+      "cta": "Save this for your next release and share it with an Android dev who's about to ship.",
+      "hashtags": [
+        "androiddev",
+        "playstore",
+        "googleplay",
+        "mobiledev",
+        "appdevelopment",
+        "indiedev",
+        "kotlin",
+        "buildinpublic"
+      ]
+    }
+  }
+}
