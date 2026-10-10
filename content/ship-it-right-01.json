@@ -1,0 +1,84 @@
+{
+  "category": "launch-checklists",
+  "template": "bold-pop",
+  "includePhoto": true,
+  "topic": "Ship It Right 01/04: Don't ship your app yet",
+  "color": "#FFD93D",
+  "content": {
+    "seriesName": "Ship It Right",
+    "seriesPart": "01/04",
+    "cover": {
+      "headline": "Don’t Ship Your App Yet",
+      "highlight": "Yet",
+      "subtitle": "Important things developers forget before launching their apps.",
+      "cta": "Swipe to learn"
+    },
+    "slides": [
+      {
+        "id": "privacy",
+        "type": "content",
+        "title": "Privacy Policy",
+        "tip": "Start with a reputable privacy-policy template, then customize it to match your actual product and data practices.",
+        "icon": "shield",
+        "quote": "If your app collects personal data, explain what you collect, why you collect it, how you use it, and how users can contact you."
+      },
+      {
+        "id": "terms",
+        "type": "content",
+        "title": "Terms & Conditions",
+        "tip": "Start with a template if useful, but review it for your product. Don’t publish generic terms that describe features you don’t have.",
+        "icon": "file-text",
+        "quote": "Set clear rules for using your product so users understand their responsibilities and your service’s limits."
+      },
+      {
+        "id": "secrets",
+        "type": "content",
+        "title": "Remove Frontend Secrets",
+        "tip": "Keep secrets on the backend, load them through server-side environment variables, and rotate any key that has already been exposed.",
+        "icon": "key-round",
+        "quote": "Never expose API secrets, private tokens, or credentials in frontend code."
+      },
+      {
+        "id": "https",
+        "type": "content",
+        "title": "Enforce HTTPS",
+        "tip": "Enable TLS through your hosting provider or CDN, redirect HTTP to HTTPS, and fix mixed-content warnings.",
+        "icon": "lock",
+        "quote": "Use HTTPS to protect data in transit between your users and your app."
+      },
+      {
+        "id": "cookies",
+        "type": "content",
+        "title": "Cookie Consent Banner",
+        "tip": "Don’t add a banner just for decoration. Configure consent behavior to match the tools you use and the laws that apply.",
+        "icon": "cookie",
+        "quote": "If your app uses cookies or tracking technologies, check which consent and disclosure rules apply to your users."
+      },
+      {
+        "id": "recap",
+        "type": "checklist",
+        "title": "Recap",
+        "description": "Save this checklist before launch.",
+        "bullets": [
+          "Privacy Policy",
+          "Terms & Conditions",
+          "Remove Frontend Secrets",
+          "Enforce HTTPS",
+          "Cookie Consent"
+        ]
+      },
+      {
+        "id": "finale",
+        "type": "closing",
+        "title": "Ship it or not yet?",
+        "checkboxes": 5,
+        "description": "Be honest. How many are done?"
+      }
+    ],
+    "caption": {
+      "caption": "Don’t ship your app yet. Five things developers forget before launch: a privacy policy, terms, frontend secrets, HTTPS and cookie consent.\n\nGeneral guidance, not legal advice. Check what applies to your users.",
+      "cta": "Comment your score: 0–5",
+      "hashtags": ["webdev", "appdev", "indiedev", "buildinpublic", "startup", "security"]
+    }
+  }
+}

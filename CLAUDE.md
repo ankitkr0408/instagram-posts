@@ -29,20 +29,21 @@ Workflow: Claude writes `content/<slug>.json` → `npm run render` → PNGs in `
 
 - `template`: `bold-pop` (default), `ship-it-right` (light), `night-shift` (dark). `category`: ai-for-developers, software-engineering, product-building, app-ideas, startup-breakdowns, developer-workflows, launch-checklists.
 - 3-12 slides total (cover + `slides`). Exactly one `closing`, last. Slide ids: unique kebab-case.
-- Any slide: optional `highlight` (exact words from its title) and `icon` (lucide.dev name, e.g. `rocket`, `shield-check`, `package`), `description`, `tip`.
+- File-level `"color": "#A8D8FF"` = one background color for every slide (series use this). `cover.cta` = footer text on the cover (default "Swipe for all N").
+- Any slide: optional `quote` (shown big with a bar, no quote marks needed), `highlight` (exact words from its title) and `icon` (lucide.dev name, e.g. `rocket`, `shield-check`, `package`), `description`, `tip`.
 
-| type         | extra fields                                                           | use for                                       |
-| ------------ | ---------------------------------------------------------------------- | --------------------------------------------- |
-| `statement`  | none (title = a few huge words)                                        | hook on slide 2                               |
-| `stat`       | `stat: {value ≤14 chars, label}`                                       | one big REAL number                           |
-| `steps`      | `steps: [{label, detail?}]` 2-5                                        | flows/processes                               |
-| `dodont`     | `dont: [..]`, `do: [..]` 1-3 each                                      | mistakes vs best practice                     |
-| `mockup`     | `mockup: {screenTitle?, rows?: [..], image?: "assets/x.png"}`          | app screens (image path relative to content/) |
-| `content`    | `bullets?: [..]` (≤3)                                                  | a point with a few bullets                    |
-| `code`       | `code: {language, after, before?, explanation?, highlightLines?: [3]}` | code tips (lines ≤ 50 chars, ≤ 14 lines)      |
-| `comparison` | `comparison: {leftTitle, rightTitle, rows: [{left, right}]}`           | X vs Y                                        |
-| `checklist`  | `bullets: [..]` 2-6                                                    | save-worthy summary                           |
-| `closing`    | none                                                                   | takeaway; CTA comes from `caption.cta`        |
+| type         | extra fields                                                                                            | use for                                          |
+| ------------ | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `statement`  | none (title = a few huge words)                                                                         | hook on slide 2                                  |
+| `stat`       | `stat: {value ≤14 chars, label}`                                                                        | one big REAL number                              |
+| `steps`      | `steps: [{label, detail?}]` 2-5                                                                         | flows/processes                                  |
+| `dodont`     | `dont: [..]`, `do: [..]` 1-3 each                                                                       | mistakes vs best practice                        |
+| `mockup`     | `mockup: {screenTitle?, rows?: [..], image?: "assets/x.png"}`                                           | app screens (image path relative to content/)    |
+| `content`    | `bullets?: [..]` (≤3)                                                                                   | a point with a few bullets                       |
+| `code`       | `code: {language, after, before?, explanation?, highlightLines?: [3]}`                                  | code tips (lines ≤ 50 chars, ≤ 14 lines)         |
+| `comparison` | `comparison: {leftTitle, rightTitle, rows: [{left, right}]}`                                            | X vs Y                                           |
+| `checklist`  | `bullets: [..]` 2-8                                                                                     | recap / save-worthy summary                      |
+| `closing`    | `checkboxes?: 5` (empty boxes + "__/5") or `choices?: [..]` (2-4 big options) for an interactive finale | takeaway or finale; CTA comes from `caption.cta` |
 
 Content, code, comparison, steps, dodont and mockup slides are auto-numbered 01, 02…; "5 things" = 5 of those. The cover shows "Swipe for all N".
 

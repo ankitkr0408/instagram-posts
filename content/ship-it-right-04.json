@@ -1,0 +1,102 @@
+{
+  "category": "launch-checklists",
+  "template": "bold-pop",
+  "includePhoto": true,
+  "topic": "Ship It Right 04/04: Now try to break it",
+  "color": "#FFB4A2",
+  "content": {
+    "seriesName": "Ship It Right",
+    "seriesPart": "04/04",
+    "cover": {
+      "headline": "Now Try to Break It",
+      "highlight": "Break It",
+      "subtitle": "The final launch checklist developers often miss.",
+      "cta": "Swipe to learn"
+    },
+    "slides": [
+      {
+        "id": "not-found",
+        "type": "content",
+        "title": "Custom 404 Page",
+        "tip": "Include a clear explanation, a link home, and useful navigation or search.",
+        "icon": "file-question",
+        "quote": "When a page doesn’t exist, help users recover instead of leaving them at a dead end."
+      },
+      {
+        "id": "links",
+        "type": "content",
+        "title": "Broken Link Fixes",
+        "tip": "Crawl the site, check internal and external links, and fix or remove outdated destinations.",
+        "icon": "link-2-off",
+        "quote": "Broken links frustrate users and can make important pages harder to discover."
+      },
+      {
+        "id": "forms",
+        "type": "content",
+        "title": "Form Validation",
+        "tip": "Validate formats and limits, return understandable errors, and never trust client-provided data.",
+        "icon": "text-cursor-input",
+        "quote": "Validate input on both the client and server; frontend checks alone are not a security boundary."
+      },
+      {
+        "id": "spam",
+        "type": "content",
+        "title": "Spam Protection",
+        "tip": "Use rate limits and bot defenses, and validate requests server-side without making the experience hostile to real users.",
+        "icon": "shield-alert",
+        "quote": "Public forms and endpoints need sensible protection against automated abuse."
+      },
+      {
+        "id": "analytics",
+        "type": "content",
+        "title": "Analytics Setup",
+        "tip": "Track a small set of useful events, respect applicable consent requirements, and avoid collecting data you don’t need.",
+        "icon": "chart-column",
+        "quote": "Page views tell you that someone arrived; meaningful events help explain what they actually did."
+      },
+      {
+        "id": "errors",
+        "type": "content",
+        "title": "Error Monitoring",
+        "tip": "Add error monitoring, remove secrets and sensitive data from logs, and review and fix recurring issues.",
+        "icon": "bug",
+        "quote": "Find errors before your users have to write the bug report."
+      },
+      {
+        "id": "devices",
+        "type": "content",
+        "title": "Test on Real Devices",
+        "tip": "Test key flows on real phones and browsers, including slow connections and common screen sizes.",
+        "icon": "smartphone",
+        "quote": "Passing on your laptop doesn’t prove the app works on the devices your users actually have."
+      },
+      {
+        "id": "recap",
+        "type": "checklist",
+        "title": "Recap",
+        "description": "Save this final checklist before launch.",
+        "bullets": [
+          "Custom 404 Page",
+          "Broken Link Fixes",
+          "Form Validation",
+          "Spam Protection",
+          "Analytics Setup",
+          "Error Monitoring",
+          "Test on Real Devices"
+        ]
+      },
+      {
+        "id": "finale",
+        "type": "closing",
+        "title": "Break your app in 60 seconds",
+        "choices": ["404 page", "Invalid form", "Mobile test"],
+        "description": "Find the bug before your users do."
+      }
+    ],
+    "caption": {
+      "caption": "Now try to break it. The final launch checks developers often miss: 404s, broken links, validation, spam, analytics, error monitoring and real devices.",
+      "cta": "Comment: Broke it / Survived",
+      "hashtags": ["webdev", "testing", "qa", "indiedev", "buildinpublic", "launch"]
+    }
+  }
+}

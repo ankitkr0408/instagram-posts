@@ -112,6 +112,7 @@ async function main() {
       branding: file.includePhoto ? branding : { ...branding, photo: null },
       outDir,
       assetDir: path.dirname(path.resolve(input)),
+      color: file.color,
       only,
     });
     if (!only) await writeExports(outDir, file.content, files);

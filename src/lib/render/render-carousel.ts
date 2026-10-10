@@ -59,13 +59,16 @@ export async function renderCarousel(options: {
   outDir: string;
   /** Folder that mockup screenshot paths are relative to (usually content/). */
   assetDir?: string;
+  /** One background color for every slide instead of the theme palette. */
+  color?: string;
   /** Render only this slide (1-based) for a quick preview. */
   only?: number;
 }): Promise<RenderResult> {
   const { content, template, branding, outDir } = options;
   await mkdir(outDir, { recursive: true });
   const fonts = fontFaceCss();
-  const theme = TEMPLATES[template].theme;
+  const base = TEMPLATES[template].theme;
+  const theme = options.color ? { ...base, bg: options.color, palette: [options.color] } : base;
 
   const browser = await getBrowser();
   const context = await browser.newContext({

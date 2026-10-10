@@ -1,0 +1,93 @@
+{
+  "category": "launch-checklists",
+  "template": "bold-pop",
+  "includePhoto": true,
+  "topic": "Ship It Right 03/04: Your UI isn't the problem",
+  "color": "#C8F56A",
+  "content": {
+    "seriesName": "Ship It Right",
+    "seriesPart": "03/04",
+    "cover": {
+      "headline": "Your UI Isn’t the Problem",
+      "highlight": "UI",
+      "subtitle": "Make your app feel fast, clear, and usable.",
+      "cta": "Swipe to learn"
+    },
+    "slides": [
+      {
+        "id": "images",
+        "type": "content",
+        "title": "Image Compression",
+        "tip": "Resize images to their display dimensions and use modern formats such as WebP or AVIF when supported.",
+        "icon": "image-down",
+        "quote": "Large images can make a polished app feel slow before users even reach the good part."
+      },
+      {
+        "id": "speed",
+        "type": "content",
+        "title": "Page Load Speed Check",
+        "tip": "Measure real loading performance, test on mobile and slower networks, and prioritize the biggest bottlenecks.",
+        "icon": "gauge",
+        "quote": "A slow app costs users time, patience, and sometimes the next click."
+      },
+      {
+        "id": "contrast",
+        "type": "content",
+        "title": "Color Contrast Fixes",
+        "tip": "Check text, buttons, and links for sufficient contrast, and don’t use color as the only way to communicate meaning.",
+        "icon": "contrast",
+        "quote": "Good design is readable design. Don’t make users guess what the text says."
+      },
+      {
+        "id": "mobile",
+        "type": "content",
+        "title": "Mobile Responsiveness",
+        "tip": "Test real layouts, navigation, forms, and tap targets on narrow screens and actual devices.",
+        "icon": "smartphone",
+        "quote": "Your app should remain usable across screen sizes, not merely shrink to fit them."
+      },
+      {
+        "id": "lazy",
+        "type": "content",
+        "title": "Lazy Loading",
+        "tip": "Lazy-load below-the-fold content where appropriate, but don’t lazy-load the main image or content needed for the initial view.",
+        "icon": "hourglass",
+        "quote": "Load non-critical images and heavy components only when they’re needed."
+      },
+      {
+        "id": "assets",
+        "type": "content",
+        "title": "Optimize Assets",
+        "tip": "Remove unused assets, compress files, split code where useful, and avoid shipping large dependencies without a reason.",
+        "icon": "package",
+        "quote": "Every unnecessary byte makes the browser do work your users never asked for."
+      },
+      {
+        "id": "recap",
+        "type": "checklist",
+        "title": "Recap",
+        "description": "Save this checklist for your next UI review.",
+        "bullets": [
+          "Image Compression",
+          "Page Load Speed Check",
+          "Color Contrast Fixes",
+          "Mobile Responsiveness",
+          "Lazy Loading",
+          "Optimize Assets"
+        ]
+      },
+      {
+        "id": "finale",
+        "type": "closing",
+        "title": "Pick your UI crime",
+        "choices": ["A · Slow", "B · Broken on mobile", "C · Hard to read"],
+        "description": "Every app has one."
+      }
+    ],
+    "caption": {
+      "caption": "Your UI isn’t the problem. How it loads, reads and behaves on a phone usually is.\n\nSix checks to make your app feel fast, clear and usable.",
+      "cta": "Comment A, B, or C",
+      "hashtags": ["webdev", "frontend", "performance", "accessibility", "uidesign", "indiedev"]
+    }
+  }
+}

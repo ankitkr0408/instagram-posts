@@ -65,6 +65,8 @@ const baseSlide = z.strictObject({
   title: text(LIMITS.title),
   description: text(LIMITS.description).optional(),
   tip: text(LIMITS.tip).optional(),
+  /** A short line shown as a big quote (no quote marks needed). */
+  quote: text(220).optional(),
   /** Words inside `title` to mark with a highlighter. */
   highlight: text(40).optional(),
   /** Lucide icon name (https://lucide.dev/icons), e.g. "rocket". */
@@ -113,7 +115,8 @@ const comparisonSlideSchema = baseSlide.extend({
 
 const checklistSlideSchema = baseSlide.extend({
   type: z.literal("checklist"),
-  bullets: bullets.min(2),
+  // Recaps can list a few more items than a normal bullet slide.
+  bullets: z.array(text(LIMITS.bullet)).min(2).max(8),
 });
 
 /** A few huge words. `title` is the statement, `description` an optional short line under it. */
@@ -162,6 +165,10 @@ const mockupSlideSchema = baseSlide.extend({
 const closingSlideSchema = baseSlide.extend({
   type: z.literal("closing"),
   bullets: bullets.max(3).optional(),
+  /** Interactive finale: big answer boxes, e.g. ["A Slow", "B Broken on mobile"]. */
+  choices: z.array(text(30)).min(2).max(4).optional(),
+  /** Interactive finale: this many empty checkboxes plus a "__/N" score. */
+  checkboxes: z.number().int().min(2).max(8).optional(),
 });
 
 export const slideSchema = z.discriminatedUnion("type", [
@@ -181,6 +188,8 @@ const coverSchema = z.strictObject({
   headline: text(LIMITS.headline),
   subtitle: text(LIMITS.subtitle),
   highlight: text(40).optional(),
+  /** Footer call-to-action on the cover; defaults to "Swipe for all N". */
+  cta: text(30).optional(),
 });
 
 export const captionSchema = z.strictObject({
@@ -284,6 +293,11 @@ const carouselFileSchema = z.strictObject({
   category: categorySchema.default("product-building"),
   template: z.enum(TEMPLATE_NAMES).default("ship-it-right"),
   includePhoto: z.boolean().default(true),
+  /** One background color for every slide (Bold Pop), e.g. "#A8D8FF". */
+  color: z
+    .string()
+    .regex(/^#[0-9a-fA-F]{6}$/, "Color must be a hex value like #A8D8FF")
+    .optional(),
   content: carouselContentSchema,
 });
 

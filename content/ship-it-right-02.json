@@ -1,0 +1,111 @@
+{
+  "category": "launch-checklists",
+  "template": "bold-pop",
+  "includePhoto": true,
+  "topic": "Ship It Right 02/04: Google doesn't know your app",
+  "color": "#A8D8FF",
+  "content": {
+    "seriesName": "Ship It Right",
+    "seriesPart": "02/04",
+    "cover": {
+      "headline": "Google Doesn’t Know Your App",
+      "highlight": "Google",
+      "subtitle": "Help search engines understand and display your pages.",
+      "cta": "Swipe to learn"
+    },
+    "slides": [
+      {
+        "id": "meta",
+        "type": "content",
+        "title": "Meta Titles & Descriptions",
+        "tip": "Write a unique, relevant title and description for each important page. Treat character counts as guidelines, not display guarantees.",
+        "icon": "search",
+        "quote": "A clear page title and description help people understand what your page offers in search results."
+      },
+      {
+        "id": "preview-image",
+        "type": "content",
+        "title": "Social Preview Image",
+        "tip": "Add appropriate Open Graph metadata and use a clear, well-cropped preview image. A common starting point is 1200 × 630 pixels.",
+        "icon": "image",
+        "quote": "When someone shares your link, make the preview explain what the page is about."
+      },
+      {
+        "id": "favicon",
+        "type": "content",
+        "title": "Favicon",
+        "tip": "Provide a legible icon at small sizes and test it against both light and dark browser UI.",
+        "icon": "star",
+        "quote": "A small, recognizable favicon makes your site easier to identify in browser tabs and bookmarks."
+      },
+      {
+        "id": "sitemap",
+        "type": "content",
+        "title": "Sitemap & robots.txt",
+        "tip": "Include canonical, indexable pages in your sitemap. Don’t use robots.txt as a way to protect private content.",
+        "icon": "map",
+        "quote": "A sitemap helps search engines discover important URLs; robots.txt tells crawlers which paths they may request."
+      },
+      {
+        "id": "alt-text",
+        "type": "content",
+        "title": "Image Alt Text",
+        "tip": "Write concise, contextual descriptions. Use empty alt text for purely decorative images instead of stuffing keywords.",
+        "icon": "accessibility",
+        "quote": "Useful alt text describes an image’s purpose for people who can’t see it."
+      },
+      {
+        "id": "structured-data",
+        "type": "content",
+        "title": "Structured Data",
+        "tip": "Add valid schema markup only when it accurately describes the page, then test it with the relevant search tools.",
+        "icon": "braces",
+        "quote": "Structured data can help search engines interpret eligible content, but it doesn’t guarantee a rich result."
+      },
+      {
+        "id": "open-graph",
+        "type": "content",
+        "title": "Open Graph & Social Tags",
+        "tip": "Set Open Graph tags and, where supported, platform-specific card metadata. Keep previews consistent with the actual page.",
+        "icon": "share-2",
+        "quote": "Control how your page appears when shared by defining its title, description, image, and relevant platform metadata."
+      },
+      {
+        "id": "test-previews",
+        "type": "content",
+        "title": "Test on Social Platforms",
+        "tip": "Test important URLs on the platforms your audience uses, including messaging apps, and check image cropping and text.",
+        "icon": "smartphone",
+        "quote": "A preview that looks right on your site can still look broken when shared elsewhere."
+      },
+      {
+        "id": "recap",
+        "type": "checklist",
+        "title": "Recap",
+        "description": "Save this launch checklist.",
+        "bullets": [
+          "Meta Titles & Descriptions",
+          "Social Preview Image",
+          "Favicon",
+          "Sitemap & robots.txt",
+          "Image Alt Text",
+          "Structured Data",
+          "Open Graph & Social Tags",
+          "Test Social Previews"
+        ]
+      },
+      {
+        "id": "finale",
+        "type": "closing",
+        "title": "What’s your site missing?",
+        "choices": ["Title", "Preview", "Favicon"],
+        "description": "Check your homepage. Pick the weak spot."
+      }
+    ],
+    "caption": {
+      "caption": "Google doesn’t know your app until you tell it. Titles, previews, favicons, sitemaps, alt text and structured data, checked before launch.\n\nNone of these guarantee rankings or rich results; they help search engines and people understand your pages.",
+      "cta": "Comment one: Title, Preview or Favicon",
+      "hashtags": ["webdev", "seo", "nextjs", "frontend", "indiedev", "buildinpublic"]
+    }
+  }
+}

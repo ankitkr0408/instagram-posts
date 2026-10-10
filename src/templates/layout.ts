@@ -42,11 +42,6 @@ const ICON = {
   down: svg('<path d="M12 5v14M6 13l6 6 6-6"/>', 40, 2.6),
   check: svg('<path d="M5 12.5l4.5 4.5L19 7.5"/>', 30, 3),
   cross: svg('<path d="M6 6l12 12M18 6L6 18"/>', 30, 3),
-  bulb: svg(
-    '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2V16h5v-.1c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/>',
-    34,
-    2,
-  ),
   squiggle: raw(
     `<svg class="doodle" width="220" height="40" viewBox="0 0 220 40" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M5 20c20-18 35 18 55 0s35 18 55 0 35 18 55 0 30 14 45 4"/></svg>`,
   ),
@@ -82,6 +77,9 @@ mark{color:inherit;background:linear-gradient(transparent 58%,${t.yellow} 58%);p
 .num{width:84px;height:84px;border-radius:24px;background:${t.green};color:${t.onGreen};display:flex;align-items:center;justify-content:center;font:700 36px/1 "Space Grotesk";flex:none}
 .icon{width:120px;height:120px;border-radius:32px;background:${t.greenSoft};color:${t.green};display:flex;align-items:center;justify-content:center;flex:none}
 .icon svg{width:64px;height:64px}
+.heading-icon{margin-left:auto;padding:0 10px 10px 16px}
+.heading-icon .icon{width:88px;height:88px;border-radius:24px}
+.heading-icon .icon svg{width:48px;height:48px}
 .list{list-style:none;display:flex;flex-direction:column;gap:20px}
 .list li{display:flex;gap:24px;align-items:flex-start;font-size:33px;line-height:1.4;padding:24px 28px;border-radius:24px;background:${t.card};border:2px solid ${t.border}}
 .dot{width:18px;height:18px;border-radius:6px;flex:none;margin-top:15px;background:${t.green}}
@@ -132,12 +130,14 @@ mark{color:inherit;background:linear-gradient(transparent 58%,${t.yellow} 58%);p
 .screen-row i svg{width:18px;height:18px}
 .doodle{color:${t.green};opacity:.9}
 .slide[data-type=cover] .body{justify-content:center;gap:44px}
-.teaser{align-self:flex-start;display:flex;align-items:center;gap:14px;font:700 36px/1 "Space Grotesk";padding:22px 30px;border-radius:999px;background:${t.green};color:${t.onGreen}}
+.quote{font:600 40px/1.35 "Inter";border-left:8px solid ${t.green};padding-left:30px}
+.score{display:flex;align-items:center;gap:22px}
+.tick{width:96px;height:96px;border-radius:20px;border:5px solid ${t.text};background:${t.card}}
+.score b{font:700 96px/1 "Space Grotesk";margin-left:18px}
+.choices{display:flex;flex-direction:column;gap:22px}
+.choices span{font:700 52px/1.1 "Space Grotesk";padding:28px 36px;border-radius:26px;border:4px solid ${t.text};background:${t.card}}
 .cta{margin-top:auto;border-radius:32px;background:${t.green};color:${t.onGreen};padding:40px 44px;display:flex;flex-direction:column;gap:24px}
 .cta p{font:700 40px/1.25 "Space Grotesk"}
-.who{display:flex;align-items:center;gap:20px;font:600 28px/1.2 "Inter"}
-.avatar{width:84px;height:84px;border-radius:50%;overflow:hidden;background:rgba(255,255,255,.25);flex:none}
-.avatar img{width:100%;height:100%;object-fit:cover}
 `;
 }
 
@@ -165,6 +165,8 @@ mark{background:${ink};color:var(--bg);padding:0 .12em;border-radius:12px;line-h
 .num{width:96px;height:96px;border-radius:24px;background:${ink};color:#fff;font-size:42px;transform:rotate(-4deg)}
 .icon{width:150px;height:150px;border-radius:36px;${card};color:${ink};transform:rotate(-4deg)}
 .icon svg{width:84px;height:84px;stroke-width:2.2}
+.heading-icon .icon{width:88px;height:88px;border-radius:24px;box-shadow:5px 5px 0 ${ink};transform:rotate(4deg)}
+.heading-icon .icon svg{width:48px;height:48px}
 .list{gap:22px}
 .list li{font-size:38px;line-height:1.3;font-weight:600;padding:26px 30px;border-radius:24px;${card}}
 .dot{width:22px;height:22px;border-radius:6px;background:${ink};margin-top:12px}
@@ -193,12 +195,34 @@ mark{background:${ink};color:var(--bg);padding:0 .12em;border-radius:12px;line-h
 .phone{border-color:${ink};box-shadow:16px 16px 0 ${ink}}
 .doodle{color:${ink}}
 .cta{${card};background:#fff;color:${ink}}
-[data-type=closing] h2{font-size:132px!important;line-height:1.08}
+[data-type=closing] h2{font-size:120px;line-height:1.08}
+.quote{border-left:10px solid ${ink};font-size:42px;line-height:1.3}
+.tip{transform:none}
+.tip b{color:var(--bg)}
+.tick{border-color:${ink};box-shadow:6px 6px 0 ${ink}}
+.choices span{${card}}
+.cta{text-align:center}
+.slide[data-type=closing]:has(.score, .choices) .body{justify-content:safe center;gap:48px}
+.slide[data-type=closing]:has(.score, .choices) .cta{margin-top:12px}
+.score b{font-size:110px}
+.check:has(li:nth-child(6)){gap:14px}
+.check:has(li:nth-child(6)) li{font-size:32px;padding:16px 24px}
+.check:has(li:nth-child(6)) .box{width:48px;height:48px}
+.check:has(li:nth-child(8)){gap:12px}
+.check:has(li:nth-child(8)) li{font-size:30px;padding:12px 22px}
+[data-type=checklist]:has(li:nth-child(6)) .body{gap:26px}
+[data-type=closing]:has(.choices) h2{font-size:100px}
+[data-type=closing]:has(.choices) .body{gap:36px}
+.choices{gap:16px}
+.choices span{font-size:44px;padding:22px 32px}
+.slide[data-type=content]:has(.quote) .body{justify-content:space-between;padding:64px 0 48px}
+.slide[data-type=content]:has(.quote) h2{font-size:92px}
+.slide[data-type=content]:has(.quote) .quote{font-size:50px;line-height:1.28;padding-left:36px}
+.slide[data-type=content]:has(.quote) .tip{font-size:38px;line-height:1.35;padding:40px 44px}
+.slide[data-type=content]:has(.quote) .tip b{font-size:26px;margin-bottom:14px}
 [data-type=cover] h1{font-size:132px;line-height:1.06}
 [data-type=cover] .sub{font-size:44px}
-.teaser{background:${ink};color:#fff;transform:rotate(-3deg);font-size:40px;padding:24px 34px;box-shadow:8px 8px 0 rgba(0,0,0,.18)}
 .cta p{font-size:44px}
-.avatar{border:3px solid ${ink}}
 .mini-avatar{border:3px solid ${ink};background:#fff}
 `;
 }
@@ -230,9 +254,12 @@ function bulletList(items: string[] | undefined): RawHtml | null {
 function tip(text: string | undefined): RawHtml | null {
   if (!text) return null;
   return html`<div class="tip">
-    ${ICON.bulb}
-    <div><b>Tip</b>${text}</div>
+    <div><b>Practical tip</b>${text}</div>
   </div>`;
+}
+
+function quoteBlock(text: string | undefined): RawHtml | null {
+  return text ? html`<blockquote class="quote">“${text}”</blockquote>` : null;
 }
 
 function iconBox(slide: Slide, assets: SlideAssets): RawHtml | null {
@@ -240,12 +267,16 @@ function iconBox(slide: Slide, assets: SlideAssets): RawHtml | null {
   return svgMarkup ? html`<div class="icon">${raw(svgMarkup)}</div>` : null;
 }
 
+/** Footer CTA on the cover: custom text, else "Swipe for all N". */
+function coverCta(content: CarouselContent): string {
+  const points = content.slides.filter((s) => NUMBERED.includes(s.type)).length;
+  return content.cover.cta ?? (points > 1 ? `Swipe for all ${points}` : "Swipe");
+}
+
 function cover({ content }: SlideContext): RawHtml {
   const { headline, subtitle, highlight } = content.cover;
-  const points = content.slides.filter((s) => NUMBERED.includes(s.type)).length;
   return html`<h1>${marked(headline, highlight)}</h1>
-    <p class="sub">${subtitle}</p>
-    <span class="teaser">${points > 1 ? `Swipe for all ${points}` : "Swipe"} ${ICON.arrow}</span>`;
+    <p class="sub">${subtitle}</p>`;
 }
 
 const NUMBERED: Slide["type"][] = ["content", "code", "comparison", "steps", "dodont", "mockup"];
@@ -275,15 +306,17 @@ function slideBody(slide: Slide, number: number | null, ctx: SlideContext): RawH
   const assets = ctx.assets ?? NO_ASSETS;
   const icon = iconBox(slide, assets);
   const title = marked(slide.title, slide.highlight);
+  // Point slides show the icon as a small badge at the end of the title row.
   const heading = html`<div class="heading">
     ${number === null ? null : html`<span class="num">${String(number).padStart(2, "0")}</span>`}
     <h2>${title}</h2>
+    ${icon ? html`<span class="heading-icon">${icon}</span>` : null}
   </div>`;
   const desc = slide.description ? html`<p class="desc">${slide.description}</p>` : null;
 
   switch (slide.type) {
     case "content":
-      return html`${icon}${heading}${desc}${bulletList(slide.bullets)}${tip(slide.tip)}`;
+      return html`${heading}${quoteBlock(slide.quote)}${desc}${bulletList(slide.bullets)}${tip(slide.tip)}`;
     case "code": {
       const { before, after, explanation } = slide.code;
       const hl = assets.code[slide.id] ?? {};
@@ -307,7 +340,7 @@ function slideBody(slide: Slide, number: number | null, ctx: SlideContext): RawH
         ${tip(slide.tip)}`;
     }
     case "checklist":
-      return html`${icon}${heading}${desc}
+      return html`${heading}${desc}
         <ul class="list check">
           ${slide.bullets.map((b) => html`<li><span class="box">${ICON.check}</span><span>${b}</span></li>`)}
         </ul>
@@ -373,17 +406,20 @@ function slideBody(slide: Slide, number: number | null, ctx: SlideContext): RawH
       </div>`;
     }
     case "closing": {
-      const { branding, content } = ctx;
-      return html`${icon ?? ICON.squiggle}
-        <h2 style="font-size:84px">${title}</h2>
-        ${desc}${bulletList(slide.bullets)}
-        <div class="cta">
-          <p>${content.caption.cta}</p>
-          <div class="who">
-            ${branding.photo ? html`<span class="avatar">${photoImg(branding.photo)}</span>` : null}
-            <span>${branding.name}<br /><span style="opacity:.8">${branding.handle}</span></span>
-          </div>
-        </div>`;
+      const interactive = slide.checkboxes || slide.choices;
+      return html`${interactive ? null : (icon ?? ICON.squiggle)}
+        <h2>${title}</h2>
+        ${
+          slide.checkboxes
+            ? html`<div class="score">
+                ${Array.from({ length: slide.checkboxes }, () => html`<span class="tick"></span>`)}
+                <b>__/${slide.checkboxes}</b>
+              </div>`
+            : null
+        }
+        ${slide.choices ? html`<div class="choices">${slide.choices.map((c) => html`<span>${c}</span>`)}</div>` : null}
+        ${quoteBlock(slide.quote)}${desc}${bulletList(slide.bullets)}
+        <div class="cta"><p>${ctx.content.caption.cta}</p></div>`;
     }
   }
 }
@@ -441,9 +477,9 @@ export function renderSlideHtml(ctx: SlideContext, fontCss: string): string {
             ${
               isLast
                 ? html`<span>Save · Share</span>`
-                : index === 0
-                  ? null
-                  : html`<span class="swipe">Swipe ${ICON.arrow}</span>`
+                : html`<span class="swipe"
+                    >${index === 0 ? coverCta(content) : "Swipe"} ${ICON.arrow}</span
+                  >`
             }
           </footer>
         </div>
@@ -454,7 +490,12 @@ export function renderSlideHtml(ctx: SlideContext, fontCss: string): string {
 
 /** Rough word count of what's printed on a slide, for the "too texty" warning. */
 export function slideWordCount(slide: Slide): number {
-  const parts: string[] = [slide.title, slide.description ?? "", slide.tip ?? ""];
+  const parts: string[] = [
+    slide.title,
+    slide.quote ?? "",
+    slide.description ?? "",
+    slide.tip ?? "",
+  ];
   if ("bullets" in slide && slide.bullets) parts.push(...slide.bullets);
   if (slide.type === "comparison")
     slide.comparison.rows.forEach((r) => parts.push(r.left, r.right));
