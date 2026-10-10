@@ -1,0 +1,122 @@
+{
+  "topic": "Play Store launch: 5 checks before you hit Publish (Bold Pop)",
+  "category": "launch-checklists",
+  "template": "bold-pop",
+  "includePhoto": true,
+  "content": {
+    "seriesName": "Ship It Right",
+    "seriesPart": "Android",
+    "cover": {
+      "headline": "Don't hit Publish on Google Play yet",
+      "highlight": "Publish",
+      "subtitle": "5 checks first. Save this for launch day."
+    },
+    "slides": [
+      {
+        "id": "hook",
+        "type": "statement",
+        "title": "Launch delays come from small, boring misses.",
+        "highlight": "small, boring",
+        "description": "Here are 5 to check before you upload."
+      },
+      {
+        "id": "app-bundle",
+        "type": "content",
+        "icon": "package",
+        "title": "Ship a signed App Bundle",
+        "highlight": "App Bundle",
+        "bullets": [
+          "Build: ./gradlew bundleRelease",
+          "Back up your upload keystore",
+          "Never commit it to Git"
+        ]
+      },
+      {
+        "id": "target-sdk",
+        "type": "code",
+        "title": "Target API 36 and shrink the build",
+        "highlight": "API 36",
+        "code": {
+          "language": "kotlin",
+          "after": "android {\n  defaultConfig {\n    targetSdk = 36\n  }\n  buildTypes {\n    release {\n      isMinifyEnabled = true\n      isShrinkResources = true\n    }\n  }\n}",
+          "highlightLines": [3, 7, 8],
+          "explanation": "Required for new apps and updates since Aug 31, 2026."
+        }
+      },
+      {
+        "id": "app-content",
+        "type": "mockup",
+        "title": "Finish every App content item",
+        "highlight": "every",
+        "description": "Play won't let you publish until they're done.",
+        "mockup": {
+          "screenTitle": "App content",
+          "rows": ["Privacy policy", "Data safety", "Content rating", "Ads", "Target audience"]
+        }
+      },
+      {
+        "id": "closed-test",
+        "type": "stat",
+        "title": "New personal accounts",
+        "stat": {
+          "value": "14 days",
+          "label": "of closed testing with 12+ testers before production."
+        },
+        "description": "As of 2026. Check your Play Console."
+      },
+      {
+        "id": "rollout",
+        "type": "steps",
+        "title": "Release in stages",
+        "highlight": "stages",
+        "steps": [
+          { "label": "Internal test", "detail": "Your team, same day" },
+          { "label": "Closed test", "detail": "Real users, real devices" },
+          { "label": "Staged rollout", "detail": "Start small, e.g. 10%" },
+          { "label": "Everyone", "detail": "Once vitals look clean" }
+        ]
+      },
+      {
+        "id": "listing",
+        "type": "dodont",
+        "title": "Make the listing sell",
+        "highlight": "sell",
+        "dont": ["Screenshots that are only slogans", "A keyword-stuffed title"],
+        "do": ["Real screens + a 3-word caption", "Say what it does in line one"]
+      },
+      {
+        "id": "checklist",
+        "type": "checklist",
+        "title": "Before you hit Publish",
+        "highlight": "Publish",
+        "bullets": [
+          "Signed .aab",
+          "targetSdk 36",
+          "App content done",
+          "Closed test passed",
+          "Listing ready"
+        ]
+      },
+      {
+        "id": "closing",
+        "type": "closing",
+        "icon": "rocket",
+        "title": "Make launch day boring.",
+        "highlight": "boring."
+      }
+    ],
+    "caption": {
+      "caption": "Before you hit Publish on Google Play, check these 5 things: a signed App Bundle, target API 36, App content, a real closed test, and a listing that shows real screens.\n\nPlay policies change every year, so double-check the current rules in Play Console.",
+      "cta": "Save this for launch day. Follow for more ship-it-right tips.",
+      "hashtags": [
+        "androiddev",
+        "playstore",
+        "googleplay",
+        "mobiledev",
+        "appdevelopment",
+        "indiedev",
+        "kotlin"
+      ]
+    }
+  }
+}

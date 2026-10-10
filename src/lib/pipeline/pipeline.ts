@@ -19,7 +19,7 @@ import type { PipelineEvent, StageId } from "./events";
 
 type Emit = (stage: StageId) => void;
 
-export class PipelineError extends Error {}
+class PipelineError extends Error {}
 
 /** Stream stage events as NDJSON. `run` returns the project id on success. */
 export function pipelineResponse(run: (emit: Emit) => Promise<string>): Response {
@@ -51,7 +51,7 @@ export function pipelineResponse(run: (emit: Emit) => Promise<string>): Response
   });
 }
 
-export function userMessage(error: unknown): string {
+function userMessage(error: unknown): string {
   if (error instanceof PipelineError) return error.message;
   const message = error instanceof Error ? error.message : "";
   if (/ECONNREFUSED|Server selection timed out/i.test(message)) {
@@ -90,10 +90,7 @@ async function loadBranding(
 }
 
 /** Render a new version of the project: render → check → export. Earlier versions are kept. */
-export async function renderProject(
-  project: ProjectDocument,
-  emit: Emit,
-): Promise<ProjectDocument> {
+async function renderProject(project: ProjectDocument, emit: Emit): Promise<ProjectDocument> {
   emit("render");
   const { branding, warnings } = await loadBranding(project.includePhoto);
   const version = await nextRenderVersion(project._id);
@@ -103,6 +100,7 @@ export async function renderProject(
     template: project.template.name as TemplateName,
     branding,
     outDir,
+    assetDir: getEnv().CONTENT_DIR,
   });
 
   emit("check");

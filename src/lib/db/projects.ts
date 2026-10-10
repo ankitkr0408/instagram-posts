@@ -87,7 +87,3 @@ export async function listProjects(limit = 50): Promise<ProjectSummary[]> {
     category: d.category,
   }));
 }
-
-export async function listTopics(): Promise<string[]> {
-  return (await projects()).distinct("topic");
-}

@@ -20,7 +20,7 @@ function getClient(): Promise<MongoClient> {
   return globalForMongo.__mongoClientPromise;
 }
 
-export async function getDb(): Promise<Db> {
+async function getDb(): Promise<Db> {
   return (await getClient()).db(getEnv().MONGODB_DB);
 }
 

@@ -1,4 +1,8 @@
 {
-  "name": "Your Name",
-  "handle": "@yourhandle"
+  "name": "Ankit",
+  "handle": "@ankit.aitalks",
+  "photo": "../data/me.png",
+  "focalX": 50,
+  "focalY": 30,
+  "zoom": 1.6
 }

@@ -23,7 +23,7 @@ export function ProjectStudioRoute() {
   return <ProjectStudio key={id} id={id} />;
 }
 
-export function ProjectStudio({ id }: { id: string }) {
+function ProjectStudio({ id }: { id: string }) {
   const [project, setProject] = useState<ProjectView | null>(null);
   const [filesMissing, setFilesMissing] = useState(false);
   const [content, setContent] = useState<CarouselContent | null>(null);

@@ -50,3 +50,15 @@ describe("drafts", () => {
     expect(await readDraft(dir, "missing.json")).toBeNull();
   });
 });
+
+describe("Claude prompt", () => {
+  it("embeds a valid example and the topic", async () => {
+    const { PROMPT_EXAMPLE, buildCarouselPrompt, extractJson } =
+      await import("@/lib/prompt/carousel-prompt");
+    expect(parseCarouselFile(PROMPT_EXAMPLE).success).toBe(true);
+    const prompt = buildCarouselPrompt("Git habits", 7);
+    expect(prompt).toContain('"Git habits"');
+    expect(prompt).toContain("7 slides total");
+    expect(JSON.parse(extractJson('Sure!\n```json\n{"a":1}\n```\nEnjoy'))).toEqual({ a: 1 });
+  });
+});

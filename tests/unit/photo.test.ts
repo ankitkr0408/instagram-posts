@@ -21,7 +21,7 @@ describe("creator photo", () => {
       PhotoError,
     );
     await expect(validatePhoto(await image(800, 800, "gif"))).rejects.toThrow(/JPEG, PNG or WebP/);
-    await expect(validatePhoto(await image(100, 100))).rejects.toThrow(/400/);
+    await expect(validatePhoto(await image(100, 100))).rejects.toThrow(/300/);
     await expect(validatePhoto(Buffer.alloc(0))).rejects.toThrow(/empty/);
   });
 

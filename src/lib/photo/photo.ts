@@ -22,8 +22,8 @@ export async function validatePhoto(buffer: Buffer): Promise<"jpeg" | "png" | "w
   if (!meta.format || !ALLOWED_FORMATS.has(meta.format)) {
     throw new PhotoError("Use a JPEG, PNG or WebP photo.");
   }
-  if ((meta.width ?? 0) < 400 || (meta.height ?? 0) < 400) {
-    throw new PhotoError("Photo must be at least 400 × 400 px.");
+  if ((meta.width ?? 0) < 300 || (meta.height ?? 0) < 300) {
+    throw new PhotoError("Photo must be at least 300 × 300 px.");
   }
   return meta.format as "jpeg" | "png" | "webp";
 }
@@ -47,12 +47,15 @@ export async function readPhoto(dataDir: string, filename: string): Promise<Buff
   }
 }
 
-/** Downscaled copy as a data URI for the renderer. The stored original is untouched. */
+/** Downscaled, lightly enhanced copy as a data URI for the renderer. The stored original is untouched. */
 export async function photoDataUri(buffer: Buffer): Promise<string> {
   const jpeg = await sharp(buffer)
-    .rotate()
+    .rotate() // respect phone EXIF orientation
     .resize({ width: 1400, height: 1400, fit: "inside", withoutEnlargement: true })
-    .jpeg({ quality: 88 })
+    // Gentle touch-up so the face reads well next to bold colors.
+    .modulate({ saturation: 1.06, brightness: 1.02 })
+    .sharpen({ sigma: 0.6 })
+    .jpeg({ quality: 88, mozjpeg: true })
     .toBuffer();
   return `data:image/jpeg;base64,${jpeg.toString("base64")}`;
 }

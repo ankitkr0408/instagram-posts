@@ -83,6 +83,20 @@ function SlideFields({ slide, onChange }: { slide: Slide; onChange: (slide: Slid
         max={LIMITS.title}
         onChange={(v) => set({ title: v ?? "" })}
       />
+      <div className="grid grid-cols-2 gap-2">
+        <Text
+          label="Highlight words"
+          value={slide.highlight}
+          max={40}
+          onChange={(v) => set({ highlight: v })}
+        />
+        <Text
+          label="Icon (lucide.dev name)"
+          value={slide.icon}
+          max={40}
+          onChange={(v) => set({ icon: v })}
+        />
+      </div>
       <Text
         label="Description"
         value={slide.description}
@@ -172,6 +186,77 @@ function SlideFields({ slide, onChange }: { slide: Slide; onChange: (slide: Slid
           />
         </>
       )}
+      {slide.type === "stat" && (
+        <div className="grid grid-cols-[120px_1fr] gap-2">
+          <Text
+            label="Big value"
+            value={slide.stat.value}
+            max={14}
+            onChange={(v) => onChange({ ...slide, stat: { ...slide.stat, value: v ?? "" } })}
+          />
+          <Text
+            label="Label"
+            value={slide.stat.label}
+            max={80}
+            onChange={(v) => onChange({ ...slide, stat: { ...slide.stat, label: v ?? "" } })}
+          />
+        </div>
+      )}
+      {slide.type === "steps" && (
+        <Lines
+          label="Steps"
+          hint="label | detail, one per line"
+          value={slide.steps.map((st) => (st.detail ? `${st.label} | ${st.detail}` : st.label))}
+          onChange={(lines) =>
+            onChange({
+              ...slide,
+              steps: (lines ?? []).map((line) => {
+                const [label = "", ...rest] = line.split("|");
+                const detail = rest.join("|").trim();
+                return detail ? { label: label.trim(), detail } : { label: label.trim() };
+              }),
+            })
+          }
+        />
+      )}
+      {slide.type === "dodont" && (
+        <>
+          <Lines
+            label="Don't"
+            hint="one per line"
+            value={slide.dont}
+            onChange={(v) => onChange({ ...slide, dont: v ?? [] })}
+          />
+          <Lines
+            label="Do"
+            hint="one per line"
+            value={slide.do}
+            onChange={(v) => onChange({ ...slide, do: v ?? [] })}
+          />
+        </>
+      )}
+      {slide.type === "mockup" && (
+        <>
+          <Text
+            label="Screenshot path in content/ (optional)"
+            value={slide.mockup.image}
+            max={80}
+            onChange={(v) => onChange({ ...slide, mockup: { ...slide.mockup, image: v } })}
+          />
+          <Text
+            label="Screen title"
+            value={slide.mockup.screenTitle}
+            max={30}
+            onChange={(v) => onChange({ ...slide, mockup: { ...slide.mockup, screenTitle: v } })}
+          />
+          <Lines
+            label="Screen rows"
+            hint="one per line"
+            value={slide.mockup.rows}
+            onChange={(v) => onChange({ ...slide, mockup: { ...slide.mockup, rows: v } })}
+          />
+        </>
+      )}
       {slide.type !== "closing" && (
         <Text
           label="Tip"
@@ -218,28 +303,18 @@ export function CarouselEditor(props: {
           onChange={(v) => onChange({ ...content, cover: { ...content.cover, headline: v ?? "" } })}
         />
         <Text
+          label="Highlight words"
+          value={content.cover.highlight}
+          max={40}
+          onChange={(v) => onChange({ ...content, cover: { ...content.cover, highlight: v } })}
+        />
+        <Text
           label="Subtitle"
           value={content.cover.subtitle}
           max={LIMITS.subtitle}
           multiline
           onChange={(v) => onChange({ ...content, cover: { ...content.cover, subtitle: v ?? "" } })}
         />
-        <label className="flex items-center gap-2 text-xs font-medium text-muted">
-          Photo side
-          <select
-            className={`${input} w-auto text-foreground`}
-            value={content.cover.photoPosition ?? "right"}
-            onChange={(e) =>
-              onChange({
-                ...content,
-                cover: { ...content.cover, photoPosition: e.target.value as "left" | "right" },
-              })
-            }
-          >
-            <option value="right">right</option>
-            <option value="left">left</option>
-          </select>
-        </label>
       </section>
 
       {content.slides.map((slide, i) => (

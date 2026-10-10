@@ -7,7 +7,7 @@ export function raw(value: string): RawHtml {
   return { [RAW]: true, value };
 }
 
-export function escapeHtml(value: string): string {
+function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api, type DraftView, type ProjectSummaryView } from "@/lib/client/api";
 import { parseCarouselFile } from "@/lib/schemas/carousel.schema";
+import { buildCarouselPrompt, extractJson } from "@/lib/prompt/carousel-prompt";
 import { findDuplicateTopics } from "@/lib/topics/duplicate-topic";
 import {
   GenerationProgress,
@@ -18,7 +19,7 @@ function check(text: string): Check {
   if (!text.trim()) return null;
   let data: unknown;
   try {
-    data = JSON.parse(text);
+    data = JSON.parse(extractJson(text));
   } catch {
     return { ok: false, message: "Not valid JSON yet." };
   }
@@ -47,6 +48,17 @@ export function ImportForm({
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState<ProgressState>(idleProgress);
   const [confirmed, setConfirmed] = useState<string | null>(null);
+  const [topic, setTopic] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  async function copyPrompt() {
+    try {
+      await navigator.clipboard.writeText(buildCarouselPrompt(topic));
+      setCopied(true);
+    } catch {
+      setError("Could not access the clipboard.");
+    }
+  }
 
   const status = check(text);
   const duplicates = status?.ok
@@ -74,7 +86,7 @@ export function ImportForm({
     setError(null);
     setProgress(idleProgress);
     try {
-      const last = await api.importCarousel(text, (e) => {
+      const last = await api.importCarousel(extractJson(text), (e) => {
         if (e.type === "stage") setProgress((p) => progressReducer(p, e.stage));
         if (e.type === "error") setProgress((p) => ({ ...p, failed: true }));
       });
@@ -89,6 +101,43 @@ export function ImportForm({
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
+      <fieldset className="flex flex-col gap-2 rounded-lg border border-border p-4">
+        <legend className="px-1 text-sm font-medium">1. Get content from Claude (free)</legend>
+        <div className="flex flex-wrap gap-2">
+          <input
+            aria-label="Topic"
+            value={topic}
+            onChange={(e) => {
+              setTopic(e.target.value);
+              setCopied(false);
+            }}
+            placeholder="Topic, e.g. 5 Git habits that save hours"
+            maxLength={160}
+            className="min-w-0 flex-1 rounded-lg border border-border bg-surface px-3 py-2 text-sm"
+          />
+          <button
+            type="button"
+            disabled={topic.trim().length < 3}
+            onClick={copyPrompt}
+            className="rounded-lg border border-border px-3 py-2 text-sm font-medium hover:border-accent disabled:opacity-50"
+          >
+            {copied ? "Copied ✓" : "Copy prompt"}
+          </button>
+          <a
+            href="https://claude.ai/new"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-lg border border-border px-3 py-2 text-sm font-medium hover:border-accent"
+          >
+            Open Claude ↗
+          </a>
+        </div>
+        <p className="text-xs text-muted">
+          Paste the prompt into Claude, then paste its JSON reply below. Or ask Claude Code to write
+          a file into content/.
+        </p>
+      </fieldset>
+
       {drafts.length > 0 && (
         <div className="flex flex-col gap-2">
           <p className="text-sm font-medium">Drafts in content/</p>
@@ -112,7 +161,7 @@ export function ImportForm({
       )}
 
       <label className="flex flex-col gap-1 text-sm font-medium">
-        Carousel JSON
+        2. Carousel JSON
         <textarea
           name="content"
           value={text}

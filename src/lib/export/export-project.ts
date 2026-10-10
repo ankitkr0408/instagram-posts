@@ -6,7 +6,7 @@ import { resolveInside } from "@/lib/files/paths";
 import { createContactSheet } from "@/lib/render/render-carousel";
 import type { CarouselContent } from "@/lib/schemas/carousel.schema";
 
-export const EXPORT_FILES = {
+const EXPORT_FILES = {
   contactSheet: "contact-sheet.png",
   caption: "caption.txt",
   content: "content.json",

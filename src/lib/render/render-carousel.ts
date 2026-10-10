@@ -5,7 +5,8 @@ import sharp from "sharp";
 import { fontFaceCss } from "@/lib/render/fonts";
 import { resolveInside, slideFilename } from "@/lib/files/paths";
 import type { CarouselContent } from "@/lib/schemas/carousel.schema";
-import { CANVAS, renderSlideHtml, type Branding } from "@/templates/layout";
+import { CANVAS, renderSlideHtml, slideWordCount, type Branding } from "@/templates/layout";
+import { loadSlideAssets } from "./slide-assets";
 import { TEMPLATES, type TemplateName } from "@/templates/themes";
 
 export type SlideIssue = { slide: number; message: string };
@@ -57,6 +58,10 @@ export async function renderCarousel(options: {
   template: TemplateName;
   branding: Branding;
   outDir: string;
+  /** Folder that mockup screenshot paths are relative to (usually content/). */
+  assetDir?: string;
+  /** Render only this slide (1-based) for a quick preview. */
+  only?: number;
 }): Promise<RenderResult> {
   const { content, template, branding, outDir } = options;
   await mkdir(outDir, { recursive: true });
@@ -72,12 +77,28 @@ export async function renderCarousel(options: {
   await context.route("**/*", (route) => route.abort());
 
   const files: string[] = [];
-  const issues: SlideIssue[] = [];
+  const loaded = await loadSlideAssets(content, options.assetDir);
+  const issues: SlideIssue[] = [...loaded.issues];
+  if (theme.variant === "pop") {
+    content.slides.forEach((slide, i) => {
+      const words = slideWordCount(slide);
+      if (words > 30) {
+        issues.push({
+          slide: i + 2,
+          message: `${words} words. Bold Pop works best under 30; split or trim.`,
+        });
+      }
+    });
+  }
   try {
     const page = await context.newPage();
     const total = content.slides.length + 1;
     for (let index = 0; index < total; index++) {
-      const slideHtml = renderSlideHtml({ content, theme, branding, index }, fonts);
+      if (options.only && index + 1 !== options.only) continue;
+      const slideHtml = renderSlideHtml(
+        { content, theme, branding, index, assets: loaded.assets },
+        fonts,
+      );
       await page.setContent(slideHtml, { waitUntil: "load" });
       await page.evaluate(() => document.fonts.ready.then(() => undefined));
       for (const message of await page.evaluate(inspectLayout)) {
@@ -100,7 +121,7 @@ export async function renderCarousel(options: {
   } finally {
     await context.close();
   }
-  return { files, issues };
+  return { files, issues: options.only ? issues.filter((i) => i.slide === options.only) : issues };
 }
 
 /** 3-column grid of thumbnails. */

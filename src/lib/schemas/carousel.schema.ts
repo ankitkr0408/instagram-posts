@@ -40,8 +40,18 @@ export const CATEGORIES = [
 ] as const;
 export const categorySchema = z.enum(CATEGORIES);
 
-export const SLIDE_TYPES = ["content", "code", "comparison", "checklist", "closing"] as const;
-export const slideTypeSchema = z.enum(SLIDE_TYPES);
+export const SLIDE_TYPES = [
+  "content",
+  "code",
+  "comparison",
+  "checklist",
+  "statement",
+  "stat",
+  "steps",
+  "dodont",
+  "mockup",
+  "closing",
+] as const;
 
 const codeBlock = z
   .string()
@@ -55,17 +65,23 @@ const baseSlide = z.strictObject({
   title: text(LIMITS.title),
   description: text(LIMITS.description).optional(),
   tip: text(LIMITS.tip).optional(),
-  visualType: z.enum(["icon", "diagram", "ui_mockup", "code", "none"]).optional(),
+  /** Words inside `title` to mark with a highlighter. */
+  highlight: text(40).optional(),
+  /** Lucide icon name (https://lucide.dev/icons), e.g. "rocket". */
+  icon: z
+    .string()
+    .regex(/^[a-z0-9-]{1,40}$/, "Icon must be a Lucide icon name like rocket or shield-check")
+    .optional(),
 });
 
 const bullets = z.array(text(LIMITS.bullet)).max(LIMITS.bulletCount);
 
-export const contentSlideSchema = baseSlide.extend({
+const contentSlideSchema = baseSlide.extend({
   type: z.literal("content"),
   bullets: bullets.optional(),
 });
 
-export const codeSlideSchema = baseSlide.extend({
+const codeSlideSchema = baseSlide.extend({
   type: z.literal("code"),
   code: z
     .strictObject({
@@ -73,13 +89,15 @@ export const codeSlideSchema = baseSlide.extend({
       before: codeBlock.optional(),
       after: codeBlock.optional(),
       explanation: text(LIMITS.description).optional(),
+      /** 1-based line numbers to highlight in the `after` (or only) snippet. */
+      highlightLines: z.array(z.number().int().min(1).max(LIMITS.codeLines)).max(6).optional(),
     })
     .refine((c) => Boolean(c.before || c.after), {
       message: "Code slide needs a `before` or `after` snippet",
     }),
 });
 
-export const comparisonSlideSchema = baseSlide.extend({
+const comparisonSlideSchema = baseSlide.extend({
   type: z.literal("comparison"),
   comparison: z.strictObject({
     leftTitle: text(30),
@@ -93,12 +111,55 @@ export const comparisonSlideSchema = baseSlide.extend({
   }),
 });
 
-export const checklistSlideSchema = baseSlide.extend({
+const checklistSlideSchema = baseSlide.extend({
   type: z.literal("checklist"),
   bullets: bullets.min(2),
 });
 
-export const closingSlideSchema = baseSlide.extend({
+/** A few huge words. `title` is the statement, `description` an optional short line under it. */
+const statementSlideSchema = baseSlide.extend({ type: z.literal("statement") });
+
+/** One big, real number. Never invent statistics. */
+const statSlideSchema = baseSlide.extend({
+  type: z.literal("stat"),
+  stat: z.strictObject({ value: text(14), label: text(80) }),
+});
+
+const stepsSlideSchema = baseSlide.extend({
+  type: z.literal("steps"),
+  steps: z
+    .array(z.strictObject({ label: text(32), detail: text(70).optional() }))
+    .min(2)
+    .max(5),
+});
+
+const dodontSlideSchema = baseSlide.extend({
+  type: z.literal("dodont"),
+  dont: z.array(text(80)).min(1).max(3),
+  do: z.array(text(80)).min(1).max(3),
+});
+
+/** Phone frame with a real screenshot (path inside content/) or a simple generated screen. */
+const mockupSlideSchema = baseSlide.extend({
+  type: z.literal("mockup"),
+  mockup: z
+    .strictObject({
+      image: z
+        .string()
+        .regex(
+          /^[a-z0-9][a-z0-9/_-]*\.(png|jpe?g|webp)$/,
+          "Image must be a path like assets/screen.png",
+        )
+        .optional(),
+      screenTitle: text(30).optional(),
+      rows: z.array(text(40)).max(5).optional(),
+    })
+    .refine((m) => Boolean(m.image || m.rows?.length), {
+      message: "Mockup needs an image or some rows",
+    }),
+});
+
+const closingSlideSchema = baseSlide.extend({
   type: z.literal("closing"),
   bullets: bullets.max(3).optional(),
 });
@@ -108,13 +169,18 @@ export const slideSchema = z.discriminatedUnion("type", [
   codeSlideSchema,
   comparisonSlideSchema,
   checklistSlideSchema,
+  statementSlideSchema,
+  statSlideSchema,
+  stepsSlideSchema,
+  dodontSlideSchema,
+  mockupSlideSchema,
   closingSlideSchema,
 ]);
 
-export const coverSchema = z.strictObject({
+const coverSchema = z.strictObject({
   headline: text(LIMITS.headline),
   subtitle: text(LIMITS.subtitle),
-  photoPosition: z.enum(["left", "right"]).optional(),
+  highlight: text(40).optional(),
 });
 
 export const captionSchema = z.strictObject({
@@ -155,6 +221,22 @@ export const carouselContentSchema = z
     if (content.slides.filter((s) => s.type === "closing").length > 1) {
       ctx.addIssue({ code: "custom", path: ["slides"], message: "Only one closing slide allowed" });
     }
+    if (content.cover.highlight && !content.cover.headline.includes(content.cover.highlight)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["cover", "highlight"],
+        message: "Highlight must be part of the headline",
+      });
+    }
+    content.slides.forEach((slide, index) => {
+      if (slide.highlight && !slide.title.includes(slide.highlight)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["slides", index, "highlight"],
+          message: "Highlight must be part of the title",
+        });
+      }
+    });
     const ids = new Set<string>();
     content.slides.forEach((slide, index) => {
       if (ids.has(slide.id)) {
@@ -170,8 +252,6 @@ export const carouselContentSchema = z
 
 export type Category = z.infer<typeof categorySchema>;
 export type Slide = z.infer<typeof slideSchema>;
-export type SlideType = Slide["type"];
-export type Cover = z.infer<typeof coverSchema>;
 export type CaptionContent = z.infer<typeof captionSchema>;
 export type CarouselContent = z.infer<typeof carouselContentSchema>;
 
@@ -180,7 +260,7 @@ export function totalSlideCount(content: Pick<CarouselContent, "slides">): numbe
   return content.slides.length + 1;
 }
 
-export type ValidationResult =
+type ValidationResult =
   | { ok: true; data: CarouselContent }
   | { ok: false; issues: Array<{ path: string; message: string }> };
 

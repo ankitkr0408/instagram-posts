@@ -1,23 +1,25 @@
 import { expect, test, type Page } from "@playwright/test";
+import { PROMPT_EXAMPLE } from "../../src/lib/prompt/carousel-prompt";
 
-async function renderDraft(page: Page, name: string) {
-  await page.goto("/");
-  await page.getByRole("button", { name }).click();
+async function render(page: Page) {
   await expect(page.getByRole("status")).toContainText("Valid:");
   await page.getByRole("button", { name: "Render carousel" }).click();
+  await page.waitForURL(/\/projects\//);
 }
 
 test("render a draft, edit, rerender, download and reopen", async ({ page }) => {
-  await renderDraft(page, "play-store-5-things.json");
-  await page.waitForURL(/\/projects\//);
+  await page.goto("/");
+  await page.getByRole("button", { name: "play-store-pop.json" }).click();
+  await render(page);
   const projectUrl = page.url();
 
   const preview = page.getByRole("region", { name: "Preview" });
-  await expect(preview.getByRole("img")).toHaveCount(8);
+  await expect(preview.getByRole("img")).toHaveCount(10);
   await expect(page.getByText("Export (render v1)")).toBeVisible();
 
   const cover = page.getByRole("region", { name: "Cover" });
-  await cover.getByLabel("Headline").fill("5 checks before your first Play Store release");
+  await cover.getByLabel("Headline").fill("Wait before you hit Publish");
+  await cover.getByLabel("Highlight words").fill("Publish");
   await expect(page.getByText("Preview shows the last render")).toBeVisible();
   await page.getByRole("button", { name: "Save & rerender" }).click();
   await expect(page.getByText("Export (render v2)")).toBeVisible();
@@ -32,11 +34,32 @@ test("render a draft, edit, rerender, download and reopen", async ({ page }) => 
   expect((await download).suggestedFilename()).toMatch(/carousel\.zip$/);
 
   await page.goto("/");
-  await page.getByRole("link", { name: /Before publishing on the Play Store/ }).click();
+  await page.getByRole("link", { name: /Play Store launch/ }).click();
   await expect(page).toHaveURL(projectUrl);
   await expect(page.getByRole("region", { name: "Cover" }).getByLabel("Headline")).toHaveValue(
-    "5 checks before your first Play Store release",
+    "Wait before you hit Publish",
   );
+});
+
+test("copy a prompt for Claude, paste the reply (with code fences) and render", async ({
+  page,
+  context,
+}) => {
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await page.goto("/");
+  await page.getByLabel("Topic").fill("5 Git habits that save hours");
+  await page.getByRole("button", { name: "Copy prompt" }).click();
+  await expect(page.getByRole("button", { name: "Copied ✓" })).toBeVisible();
+  const prompt = await page.evaluate(() => navigator.clipboard.readText());
+  expect(prompt).toContain('"5 Git habits that save hours"');
+  expect(prompt).toContain("ONLY a JSON object");
+
+  const reply = { ...PROMPT_EXAMPLE, topic: "Git habits (pasted reply)" };
+  await page
+    .getByLabel("Carousel JSON")
+    .fill(`Here you go:\n\`\`\`json\n${JSON.stringify(reply, null, 2)}\n\`\`\``);
+  await render(page);
+  await expect(page.getByRole("region", { name: "Preview" }).getByRole("img")).toHaveCount(7);
 });
 
 test("pasted JSON is validated before rendering", async ({ page }) => {
@@ -52,13 +75,13 @@ test("pasted JSON is validated before rendering", async ({ page }) => {
 });
 
 test("warns about duplicate topics but allows reuse", async ({ page }) => {
-  await renderDraft(page, "play-store-5-things-dark.json");
-  await page.waitForURL(/\/projects\//);
+  const json = JSON.stringify({ ...PROMPT_EXAMPLE, topic: "Duplicate topic check" });
   await page.goto("/");
-  await expect(
-    page.getByRole("link", { name: /Play Store launch: 5 things people forget/ }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "play-store-5-things-dark.json" }).click();
+  await page.getByLabel("Carousel JSON").fill(json);
+  await render(page);
+
+  await page.goto("/");
+  await page.getByLabel("Carousel JSON").fill(json);
   await expect(page.getByRole("status")).toContainText("already made a carousel");
   await page.getByRole("button", { name: "Render carousel" }).click();
   await expect(page.getByRole("status")).toContainText("Rendering anyway");

@@ -7,7 +7,6 @@ export const sampleCarousel: CarouselContent = {
   cover: {
     headline: "Stop leaking API keys from your frontend",
     subtitle: "A practical checklist for keeping secrets server-side in modern web apps",
-    photoPosition: "right",
   },
   slides: [
     {

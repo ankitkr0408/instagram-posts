@@ -1,13 +1,16 @@
 /**
  * Render carousel JSON files straight to PNGs + ZIP. No database, no API calls.
  *
- *   npm run render -- content/my-post.json [more.json ...] [--template night-shift]
+ *   npm run render -- content/my-post.json [more.json ...]
+ *     --slide 1            render only that slide (quick preview, no ZIP)
+ *     --template bold-pop  override the template in the file
+ *     --brand file.json    branding file (default content/brand.json)
  *
- * Output: output/<file-name>/v<n>/ (earlier versions are kept).
- * Branding comes from content/brand.json if present: { name, handle, photo, focalX, focalY, zoom }.
+ * Output: output/<file-name>/ (overwritten on each run).
+ * brand.json: { "name", "handle", "photo" (path relative to brand.json), "focalX", "focalY", "zoom" }
  */
-import { existsSync, readdirSync } from "node:fs";
-import { readFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { mkdir, readdir, readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { z } from "zod";
 import { writeExports } from "@/lib/export/export-project";
@@ -16,7 +19,7 @@ import { photoDataUri, validatePhoto } from "@/lib/photo/photo";
 import { closeBrowser, renderCarousel } from "@/lib/render/render-carousel";
 import { parseCarouselFile } from "@/lib/schemas/carousel.schema";
 import type { Branding } from "@/templates/layout";
-import { TEMPLATE_NAMES } from "@/templates/themes";
+import { TEMPLATE_NAMES, type TemplateName } from "@/templates/themes";
 
 const brandSchema = z.strictObject({
   name: z.string().max(40).default("Your Name"),
@@ -27,52 +30,49 @@ const brandSchema = z.strictObject({
   zoom: z.number().min(1).max(2).default(1),
 });
 
-async function loadBranding(): Promise<Branding> {
-  const file = path.resolve("content/brand.json");
+async function loadBranding(file: string): Promise<Branding> {
   const brand = brandSchema.parse(existsSync(file) ? JSON.parse(await readFile(file, "utf8")) : {});
-  let photo: Branding["photo"] = null;
-  if (brand.photo) {
-    const photoPath = path.resolve(path.dirname(file), brand.photo);
-    if (existsSync(photoPath)) {
-      const buffer = await readFile(photoPath);
-      await validatePhoto(buffer);
-      photo = {
-        src: await photoDataUri(buffer),
-        focalX: brand.focalX,
-        focalY: brand.focalY,
-        zoom: brand.zoom,
-      };
-    } else {
-      console.warn(`! Photo not found at ${photoPath}; using the photo-free cover.`);
-    }
+  if (!brand.photo) return { name: brand.name, handle: brand.handle, photo: null };
+  const photoPath = path.resolve(path.dirname(file), brand.photo);
+  if (!existsSync(photoPath)) {
+    console.warn(`! Photo not found at ${photoPath}; using the photo-free layout.`);
+    return { name: brand.name, handle: brand.handle, photo: null };
   }
-  return { name: brand.name, handle: brand.handle, photo };
+  const buffer = await readFile(photoPath);
+  await validatePhoto(buffer);
+  const { focalX, focalY, zoom } = brand;
+  return {
+    name: brand.name,
+    handle: brand.handle,
+    photo: { src: await photoDataUri(buffer), focalX, focalY, zoom },
+  };
 }
 
-function nextVersionDir(base: string): string {
-  const versions = existsSync(base)
-    ? readdirSync(base).map((d) => Number(/^v(\d+)$/.exec(d)?.[1] ?? 0))
-    : [];
-  return path.join(base, `v${Math.max(0, ...versions) + 1}`);
+/** Pull `--name value` out of args. */
+function takeFlag(args: string[], name: string): string | undefined {
+  const i = args.indexOf(name);
+  return i >= 0 ? args.splice(i, 2)[1] : undefined;
 }
 
 async function main() {
   const args = process.argv.slice(2);
-  const t = args.indexOf("--template");
-  const templateOverride = t >= 0 ? args.splice(t, 2)[1] : undefined;
-  if (templateOverride && !(TEMPLATE_NAMES as string[]).includes(templateOverride)) {
-    throw new Error(
-      `Unknown template "${templateOverride}". Use one of: ${TEMPLATE_NAMES.join(", ")}`,
-    );
+  const template = takeFlag(args, "--template") as TemplateName | undefined;
+  const brandFile = path.resolve(takeFlag(args, "--brand") ?? "content/brand.json");
+  const slideArg = takeFlag(args, "--slide");
+  const only = slideArg ? Number(slideArg) : undefined;
+  if (template && !TEMPLATE_NAMES.includes(template)) {
+    throw new Error(`Unknown template "${template}". Use one of: ${TEMPLATE_NAMES.join(", ")}`);
   }
-  if (args.length === 0) throw new Error("Usage: npm run render -- content/<file>.json [...]");
+  if (only !== undefined && !(Number.isInteger(only) && only >= 1))
+    throw new Error("--slide needs a number like 1");
+  if (args.length === 0)
+    throw new Error("Usage: npm run render -- content/<file>.json [--slide 1]");
 
-  const branding = await loadBranding();
-  let failed = 0;
+  const branding = await loadBranding(brandFile);
   for (const input of args) {
     const result = parseCarouselFile(JSON.parse(await readFile(input, "utf8")));
     if (!result.success) {
-      failed++;
+      process.exitCode = 1;
       console.error(`✗ ${input}`);
       for (const issue of result.error.issues.slice(0, 10)) {
         console.error(`    ${issue.path.join(".") || "(root)"}: ${issue.message}`);
@@ -80,23 +80,28 @@ async function main() {
       continue;
     }
     const file = result.data;
-    const template = (templateOverride ?? file.template) as (typeof TEMPLATE_NAMES)[number];
-    const outDir = nextVersionDir(
-      path.resolve("output", sanitizeFilename(path.basename(input, ".json"))),
-    );
+    const outDir = path.resolve("output", sanitizeFilename(path.basename(input, ".json")));
+    await mkdir(outDir, { recursive: true });
+    if (!only) {
+      // Full render replaces the previous one, so drop slides that may no longer exist.
+      for (const f of await readdir(outDir))
+        if (/^slide-\d+\.png$/.test(f)) await rm(path.join(outDir, f));
+    }
     const { files, issues } = await renderCarousel({
       content: file.content,
-      template,
+      template: template ?? file.template,
       branding: file.includePhoto ? branding : { ...branding, photo: null },
       outDir,
+      assetDir: path.dirname(path.resolve(input)),
+      only,
     });
-    await writeExports(outDir, file.content, files);
+    if (!only) await writeExports(outDir, file.content, files);
+    const shown = files.map((f) => path.relative(process.cwd(), path.join(outDir, f)));
     console.log(
-      `✓ ${input} → ${path.relative(process.cwd(), outDir)}/ (${files.length} slides, ${template})`,
+      `✓ ${input} → ${only ? shown[0] : `${path.relative(process.cwd(), outDir)}/ (${files.length} slides)`}`,
     );
     for (const issue of issues) console.log(`    ! slide ${issue.slide}: ${issue.message}`);
   }
-  if (failed) process.exitCode = 1;
 }
 
 main()

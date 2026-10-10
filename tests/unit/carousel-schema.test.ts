@@ -79,4 +79,52 @@ describe("carousel schema", () => {
     checklist.bullets = ["only one"];
     expect(validateCarousel(content).ok).toBe(false);
   });
+
+  it("requires highlights to be part of the title", () => {
+    const content = clone();
+    content.cover.highlight = "not in headline";
+    expect(validateCarousel(content).ok).toBe(false);
+    content.cover.highlight = "API keys";
+    content.slides[0].highlight = "problem";
+    expect(validateCarousel(content).ok).toBe(true);
+  });
+
+  it("validates the new slide types", () => {
+    const content = clone();
+    const closing = content.slides.pop()!;
+    content.slides.push(
+      { id: "s1", type: "statement", title: "Ship less, ship better" },
+      { id: "s2", type: "stat", title: "Target", stat: { value: "API 36", label: "Android 16" } },
+      { id: "s3", type: "steps", title: "Flow", steps: [{ label: "Build" }, { label: "Test" }] },
+      { id: "s4", type: "dodont", title: "Listing", do: ["Real screens"], dont: ["Slogans"] },
+      { id: "s5", type: "mockup", title: "Screen", mockup: { rows: ["Privacy policy"] } },
+    );
+    content.slides = content.slides.slice(-6);
+    content.slides.push(closing);
+    expect(validateCarousel(content)).toMatchObject({ ok: true });
+
+    const bad = structuredClone(content);
+    const steps = bad.slides.find((s) => s.type === "steps");
+    if (steps?.type === "steps") steps.steps = [{ label: "only one" }];
+    expect(validateCarousel(bad).ok).toBe(false);
+
+    const noScreen = structuredClone(content);
+    const mock = noScreen.slides.find((s) => s.type === "mockup");
+    if (mock?.type === "mockup") mock.mockup = {};
+    expect(validateCarousel(noScreen).ok).toBe(false);
+  });
+
+  it("rejects unsafe icon names and image paths", () => {
+    const content = clone();
+    content.slides[0].icon = "../../etc/passwd";
+    expect(validateCarousel(content).ok).toBe(false);
+    const content2 = clone();
+    content2.slides[0] = {
+      id: "m",
+      type: "mockup",
+      title: "x",
+      mockup: { image: "../secret.png" },
+    };
+    expect(validateCarousel(content2).ok).toBe(false);
+  });
 });
